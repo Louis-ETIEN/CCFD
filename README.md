@@ -6,6 +6,11 @@ The goal is not leaderboard optimization, but to explore how model choice, calib
   
 It builds on a transaction database collected during a research collaboration of Wordling and ULB (Université Libre de Bruxelles). You can find more details about the database here: https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud  
   
+**Warning:** Due to size constraints, the database is **not** included in the repository.  
+  
+To run the notebooks locally, download the dataset and place the CSV file at:
+walkthrough/database/raw.csv
+  
 ## Project structure
 
 ├── walkthrough/          # Notebook for analysis and models training
