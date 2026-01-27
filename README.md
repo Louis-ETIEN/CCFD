@@ -1,118 +1,3 @@
-# Credit Card Fraud Detection: From Exploratory Data Analysis to inference API
-
-This project is an end-to-end exploration of credit card fraud detection under realistic constraints: extreme class imbalance, temporal dependencies, limited labeled data, and operational decision-making requirements.  
-
-The goal is not leaderboard optimization, but to explore how model choice, calibration, thresholding, and ranking strategies interact in practice, and to deliver a deployable prediction service.  
-  
-It builds on a transaction database collected during a research collaboration of Wordling and ULB (Université Libre de Bruxelles). You can find more details about the database here: https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud  
-  
-**Warning:** Due to size constraints, the database is **not** included in the repository.  
-  
-To run the notebooks locally, download the dataset and place the CSV file at:
-walkthrough/database/raw.csv
-  
-## Project structure
-
-├── walkthrough/          # Notebook for analysis and models training
-├── api/                  # Prediction API + Docker setup
-└── README.md
-
-## Walkthrough overview
-
-The walkthrough notebooks document a step-by-step approach to fraud detection on a highly imbalanced dataset (≈0.17% frauds, 48 hours of data). After some exploratory data analysis, I trained a Logistic regression model and introduced the main metrics used for high imbalance classification problems (ROC and PR). I then trained a Gradient Boosted Tree, a staple of fraud detection problems, to compare and contrast the performances and inference methods to the Logistic Regression.  
-  
-Below is a quick summary of those notebooks:  
-  
-**Key challenges:**  
-  
--Severe class imbalance
--Strong temporal effects and leakage risks
--Limited positive samples for calibration
--Asymmetric error costs  
-   
-**Dataset shortcomings**
-
-- Limited time spans (2 days of data) means over optimistic models as patterns are easier to identify in a short time frame.
-- The PCA transform of features aimed at preserving customer privacy prevents feature-engineering.
-  
-**Main findings:**  
-  
-- Time-aware splitting is critical to avoid inflated performance
-- Calibration can fail when positives are scarce
-- High imbalance makes the models overconfident and the scores diverge from real probability estimates
-- Threshold-based optimization using a cost function works well for logistic regression
-- Ranking-based metrics (Recall@K, Precision@K) are better suited for tree models
-
-**Final model choice:**  
-  
-Despite XGBoost achieving slightly better ranking performance, I chose the Logistic Regression model calibrated using Platt-scaling for the following upsides:  
-  
-- Reliable probability estimates
-- Stable threshold behavior
-- Predictable operational performance
-
-In a realistic production setting, the better ranking performance and interpretability of the gradient boosted tree would outweigh the logistic regression having a more stable threshold selection.  
-  
-## Prediction API  
-  
-The project includes a production-style API exposing the fraud model to a /predict endpoint using FastAPI.
-
-**How to run the API:**  
-  
-- With Docker:  
-    After downloading the project to your device, from the api/ folder:
-    - run docker build -t fraud-api . in terminal
-    - run docker run -p 8000:8000 fraud-api in terminal
-
-- Directly:
-    After downloading the project to your device, from the api/ folder:
-    - Donwload the dependencies of the requirements-api.txt file
-    - run uvicorn app:app --reload from terminal
-
-In both cases, predict request will now be served at http://localhost:8000/predict. To send the feature values required for prediction, you can:  
-  
-- Use the built in docs page provided by FastAPI: http://localhost:8000/docs
-- Send a POST request using curl:
-    curl -X POST http://127.0.0.1:8000/predict \          
-        -H "Content-Type: application/json" \
-        -d '{ "Time": 0,
-        "feature_1": 0,
-        "feature_2": 0, 
-        "feature_3": 0, 
-        "feature_4": 0,  
-        "feature_5": 0, 
-        "feature_6": 0,
-        "feature_7": 0,                         
-        "feature_8": 0,    
-        "feature_9": 0,
-        "feature_10": 0,
-        "feature_11": 0,
-        "feature_12": 0, 
-        "feature_13": 0,
-        "feature_14": 0,
-        "feature_15": 0,
-        "feature_16": 0,
-        "feature_17": 0,
-        "feature_18": 0,
-        "feature_19": 0,
-        "feature_20": 0,
-        "feature_21": 0,
-        "feature_22": 0,
-        "feature_23": 0,
-        "feature_24": 0,
-        "feature_25": 0,
-        "feature_26": 0,
-        "feature_27": 0,
-        "feature_28": 0,
-        "Amount": 0 }'
-
-You can also check the status at http://localhost:8000/health.
-
-## Outlook
-
-This project was a great learning experience and I had a lot of fun implementing and exploring the metrics related to high-imbalance classification problems. My biggest take-away is that in ML, the most important step is finding the right tool for the job.  
-In the future, I hope to revisit this project with a different database, to hopefully perform the feature engineering myself and work with a longer time scale that would allow time-series cross-validation.  
-
 # Credit Card Fraud Detection: From Exploratory Data Analysis to Inference API  
   
 This project is an end-to-end exploration of credit card fraud detection under realistic constraints: extreme class imbalance, temporal dependencies, limited labeled data, and operational decision-making requirements.  
@@ -123,8 +8,8 @@ It builds on a transaction database collected during a research collaboration be
 https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud  
   
 Project structure
-├── walkthrough/ # Notebooks for analysis and model training
-├── api/ # Prediction API + Docker setup
+├── walkthrough/ <--Notebooks for analysis and model training
+├── api/ <--Prediction API + Docker setup
 └── README.md  
   
 ## Walkthrough overview  
@@ -230,4 +115,6 @@ You can also check the API status at: http://localhost:8000/health
 ## Outlook  
   
 This project was a great learning experience, and I had a lot of fun implementing and exploring the metrics associated to high-imbalance classification problems. My biggest takeaway is that in machine learning, the most important step is choosing the right tool for the job.  
-In the future, I would like to revisit this project using a different dataset — ideally one where feature engineering is possible and where a longer time horizon allows for more realistic time-series cross-validation and model evaluation.
+In the future, I would like to revisit this project using a different dataset — ideally one where feature engineering is possible and where a longer time horizon allows for more realistic time-series cross-validation and model evaluation. 
+  
+Many thanks to the ULB research team for making this data publicly available.
