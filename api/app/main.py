@@ -19,7 +19,7 @@ MODEL_VERSION = "logistic_regression_platt_v1"
 
 MODEL_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "models/model_lr_platt.pkl")
 BUSINESS_THRESHOLD = float(
-    os.getenv("BUSINESS_THRESHOLD", 0.007)
+    os.getenv("BUSINESS_THRESHOLD", 0.01)
 )
 
 model = joblib.load(MODEL_PATH)
@@ -118,7 +118,7 @@ def predict(req: PredictionRequest, request: Request):
         fraud = proba >= BUSINESS_THRESHOLD
 
         logger.info(
-                    "Prediction [%s] done | proba = %.4f | threshold = %.2f | fraud = %s",
+                    "Prediction [%s] done | proba = %.5f | threshold = %.2f | fraud = %s",
                     request_id,
                     proba,
                     BUSINESS_THRESHOLD,
